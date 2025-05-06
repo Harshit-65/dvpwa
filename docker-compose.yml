@@ -10,6 +10,11 @@ services:
 
   redis:
     image: redis:alpine
+    volumes:
+      - type: tmpfs
+        target: /data
+        tmpfs:
+          size: 100M
 
   sqli:
     build:
