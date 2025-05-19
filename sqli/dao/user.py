@@ -170,3 +170,36 @@ def get_all_users() -> List[Dict]:
         }
         for user in users
     ]
+
+def hash_password(password):
+    """Hash a password using scrypt with a random salt."""
+    salt = os.urandom(16)
+    hashed = hashlib.scrypt(
+        password.encode(),
+        salt=salt,
+        n=16384,  # CPU/memory cost parameter
+        r=8,      # Block size parameter
+        p=1,      # Parallelization parameter
+        dklen=32  # Length of the derived key
+    )
+    # Store salt and hash together, separated by '$'
+    return salt.hex() + '$' + hashed.hex()
+
+def verify_password(stored_password, provided_password):
+    """Verify a password against its stored hash."""
+    # Extract salt and hash from stored password
+    salt_hex, hash_hex = stored_password.split('$')
+    salt = bytes.fromhex(salt_hex)
+    
+    # Hash the provided password with the same salt
+    computed_hash = hashlib.scrypt(
+        provided_password.encode(),
+        salt=salt,
+        n=16384,
+        r=8,
+        p=1,
+        dklen=32
+    )
+    
+    # Compare the computed hash with the stored hash
+    return computed_hash.hex() == hash_hex
