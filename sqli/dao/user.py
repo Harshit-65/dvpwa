@@ -1,4 +1,5 @@
 import hashlib
+import bcrypt
 import os
 import sqlite3
 from typing import Dict, List, Optional, Tuple, Union
